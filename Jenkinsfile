@@ -45,7 +45,7 @@ pipeline {
         stage('docker test container'){
             steps {
                 echo 'booting up docker test container...'
-                sh "docker run -dp ${APP_PORT}:${APP_PORT} --name ${TEST_CONTAINER_NAME} --rm ${ORG_NAME}/${APP_NAME}:latest"
+                sh "docker run -dp ${APP_LISTENING_PORT}:${APP_LISTENING_PORT} --name ${TEST_CONTAINER_NAME} --rm ${ORG_NAME}/${APP_NAME}:latest"
             }
         }
 
