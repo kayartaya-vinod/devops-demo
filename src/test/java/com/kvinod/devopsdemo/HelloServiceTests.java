@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class HelloServiceTests {
+class HelloServiceTests {
 
     @Autowired
     HelloService service;
