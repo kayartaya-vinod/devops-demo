@@ -23,7 +23,9 @@ pipeline {
         stage('unit test'){
             steps {
                 echo 'unit tests...'
-                sh 'mvn test'
+                sh 'mvn testorg.jacoco:jacoco-maven-plugin:report'
+                junit 'target/surefire-reports/*.xml'
+                jacoco execPattern: 'target/jacoco.exec'
             }
         }
 
