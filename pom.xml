@@ -59,7 +59,7 @@
 				<version>0.8.5</version>
 				<configuration>
 					<excludes>
-						<exclude>com/kvinod/**/*Application.class</exclude>
+						<exclude>**/DevopsDemoApplication.*</exclude>
 					</excludes>
 				</configuration>
 				<executions>
