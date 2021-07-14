@@ -89,6 +89,8 @@ pipeline {
         always {
             echo "removing docker test container..."
             sh "docker stop ${TEST_CONTAINER_NAME}"
+            echo "removing the workspace"
+            cleanWs()
         }
     }
 }
