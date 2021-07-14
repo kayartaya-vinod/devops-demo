@@ -6,7 +6,7 @@ pipeline {
         APP_NAME = "devops-demo"
         APP_VERSION = "0.0.1-SNAPSHOT"
         APP_CONTEXT_ROOT = "/"
-        APP_LISTENING_PORT = "8080"
+        APP_LISTENING_PORT = "8888"
         TEST_CONTAINER_NAME = "ci-${APP_NAME}-${BUILD_NUMBER}"
         DOCKER_HUB = credentials("${ORG_NAME}-docker-hub")
     }
@@ -45,8 +45,8 @@ pipeline {
         stage('performance test'){
             steps {
                 echo 'testing for performance...'
-                sh "jmeter --version"
-                // perfReport sourceDataFiles: 'target/jmeter/results/*.csv', errorUnstableThreshold: 0, errorFailedThreshold: 5, errorUnstableResponseTimeThreshold: 'default.jtl:100'
+                sh "jmeter -jjmeter.save.saveservice.output_format=xml -n -t ./devops-demo.jmx -l ./target/devops-demo.jtl"
+                archiveArtifacts artifacts: 'target/*.jtl', fingerprint: true
             }
         }
 
