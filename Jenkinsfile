@@ -42,6 +42,13 @@ pipeline {
             }
         }
 
+        stage('docker test container'){
+            steps {
+                echo 'booting up docker test container...'
+                sh "docker run -dp ${APP_PORT}:${APP_PORT} --name ${TEST_CONTAINER_NAME} --rm ${ORG_NAME}/${APP_NAME}:latest"
+            }
+        }
+
         stage('performance test'){
             steps {
                 echo 'testing for performance...'
@@ -60,6 +67,12 @@ pipeline {
             steps {
                 echo 'publishing docker image to docker repository...'
             }
+        }
+    }
+    post {
+        always {
+            echo "removing docker test container..."
+            sh "docker stop ${TEST_CONTAINER_NAME}"
         }
     }
 }
