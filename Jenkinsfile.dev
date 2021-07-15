@@ -16,14 +16,14 @@ pipeline {
         stage('compile'){
             steps {
                 echo 'compiling...'
-                sh 'mvn clean compile'
+                bat 'mvn clean compile'
             }
         }
 
         stage('unit test'){
             steps {
                 echo 'unit tests...'
-                sh 'mvn test'
+                bat 'mvn test'
                 junit 'target/surefire-reports/*.xml'
                 jacoco execPattern: 'target/jacoco.exec'
             }
@@ -32,7 +32,7 @@ pipeline {
         stage('build'){
             steps {
                 echo 'creating jar...'
-                sh 'mvn package -DskipTests=true'
+                bat 'mvn package -DskipTests=true'
                 archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
         }
@@ -40,21 +40,21 @@ pipeline {
         stage('dockerize'){
             steps {
                 echo 'creating docker image...'
-                sh "docker build -t ${ORG_NAME}/${APP_NAME}:${APP_VERSION} -t ${ORG_NAME}/${APP_NAME}:latest ."
+                bat "docker build -t ${ORG_NAME}/${APP_NAME}:${APP_VERSION} -t ${ORG_NAME}/${APP_NAME}:latest ."
             }
         }
 
         stage('docker test container'){
             steps {
                 echo 'booting up docker test container...'
-                sh "docker run -dp ${APP_LISTENING_PORT}:${APP_LISTENING_PORT} --name ${TEST_CONTAINER_NAME} --rm ${ORG_NAME}/${APP_NAME}:latest"
+                bat "docker run -dp ${APP_LISTENING_PORT}:${APP_LISTENING_PORT} --name ${TEST_CONTAINER_NAME} --rm ${ORG_NAME}/${APP_NAME}:latest"
             }
         }
 
         stage('performance test'){
             steps {
                 echo 'testing for performance...'
-                sh "jmeter -n -t ./devops-demo.jmx -l ./target/devops-demo.jtl"
+                bat "jmeter -n -t ./devops-demo.jmx -l ./target/devops-demo.jtl"
                 archiveArtifacts artifacts: 'target/*.jtl', fingerprint: true
             }
         }
@@ -84,8 +84,8 @@ pipeline {
             steps {
                 echo 'publishing docker image to docker repository...'
                 withDockerRegistry([ credentialsId: "${ORG_NAME}-docker-hub", url: "" ]) {
-                    sh "docker push ${ORG_NAME}/${APP_NAME}:${APP_VERSION}"
-                    sh "docker push ${ORG_NAME}/${APP_NAME}:latest"
+                    bat "docker push ${ORG_NAME}/${APP_NAME}:${APP_VERSION}"
+                    bat "docker push ${ORG_NAME}/${APP_NAME}:latest"
                 }
             }
         }
@@ -93,7 +93,7 @@ pipeline {
     post {
         always {
             echo "removing docker test container..."
-            sh "docker stop ${TEST_CONTAINER_NAME}"
+            bat "docker stop ${TEST_CONTAINER_NAME}"
             echo "removing the workspace"
             cleanWs()
         }
