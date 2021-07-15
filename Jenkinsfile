@@ -23,7 +23,7 @@ pipeline {
         stage('unit test'){
             steps {
                 echo 'unit tests...'
-                sh 'mvn test org.jacoco:jacoco-maven-plugin:report'
+                sh 'mvn test'
                 junit 'target/surefire-reports/*.xml'
                 jacoco execPattern: 'target/jacoco.exec'
             }
@@ -54,7 +54,7 @@ pipeline {
         stage('performance test'){
             steps {
                 echo 'testing for performance...'
-                sh "jmeter -jjmeter.save.saveservice.output_format=xml -n -t ./devops-demo.jmx -l ./target/devops-demo.jtl"
+                sh "jmeter -n -t ./devops-demo.jmx -l ./target/devops-demo.jtl"
                 archiveArtifacts artifacts: 'target/*.jtl', fingerprint: true
             }
         }
@@ -78,11 +78,14 @@ pipeline {
        }
 
         stage('publish docker image'){
+            when {
+                branch 'release'
+            }
             steps {
                 echo 'publishing docker image to docker repository...'
                 withDockerRegistry([ credentialsId: "${ORG_NAME}-docker-hub", url: "" ]) {
                     sh "docker push ${ORG_NAME}/${APP_NAME}:${APP_VERSION}"
-                    sh "docker tag ${ORG_NAME}/${APP_NAME}:${APP_VERSION} ${ORG_NAME}/${APP_NAME}:latest"
+                    sh "docker push ${ORG_NAME}/${APP_NAME}:latest"
                 }
             }
         }
