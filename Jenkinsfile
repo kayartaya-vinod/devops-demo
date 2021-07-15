@@ -54,7 +54,7 @@ pipeline {
         stage('performance test'){
             steps {
                 echo 'testing for performance...'
-                sh "jmeter -jjmeter.save.saveservice.output_format=xml -n -t ./devops-demo.jmx -l ./target/devops-demo.jtl"
+                sh "jmeter -n -t ./devops-demo.jmx -l ./target/devops-demo.jtl"
                 archiveArtifacts artifacts: 'target/*.jtl', fingerprint: true
             }
         }
@@ -85,7 +85,7 @@ pipeline {
                 echo 'publishing docker image to docker repository...'
                 withDockerRegistry([ credentialsId: "${ORG_NAME}-docker-hub", url: "" ]) {
                     sh "docker push ${ORG_NAME}/${APP_NAME}:${APP_VERSION}"
-                    sh "docker tag ${ORG_NAME}/${APP_NAME}:${APP_VERSION} ${ORG_NAME}/${APP_NAME}:latest"
+                    sh "docker push ${ORG_NAME}/${APP_NAME}:latest"
                 }
             }
         }
@@ -95,7 +95,7 @@ pipeline {
             echo "removing docker test container..."
             sh "docker stop ${TEST_CONTAINER_NAME}"
             echo "removing the workspace"
-            // cleanWs()
+            cleanWs()
         }
     }
 }
