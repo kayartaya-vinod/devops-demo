@@ -23,7 +23,7 @@ pipeline {
         stage('unit test'){
             steps {
                 echo 'unit tests...'
-                sh 'mvn test org.jacoco:jacoco-maven-plugin:report'
+                sh 'mvn test'
                 junit 'target/surefire-reports/*.xml'
                 jacoco execPattern: 'target/jacoco.exec'
             }
@@ -95,7 +95,7 @@ pipeline {
             echo "removing docker test container..."
             sh "docker stop ${TEST_CONTAINER_NAME}"
             echo "removing the workspace"
-            cleanWs()
+            // cleanWs()
         }
     }
 }
