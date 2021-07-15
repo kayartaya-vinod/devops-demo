@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class WelcomeService {
 
+    private static final String MESSAGE = "Welcome to DevOps!";
+
     public String getWelcomeMessage() {
-        return "Welcome to DevOps!";
+        return MESSAGE;
     }
 
     public String getWelcomeMessageFor(String user) {
