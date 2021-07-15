@@ -8,4 +8,8 @@ public class WelcomeService {
     public String getWelcomeMessage() {
         return "Welcome to DevOps!";
     }
+
+    public String getWelcomeMessageFor(String user) {
+        return String.format("Hello %s, welcome to DevOps!", user);
+    }
 }
