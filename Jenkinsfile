@@ -79,9 +79,9 @@ pipeline {
        }
 
         stage('publish docker image'){
-            when {
-                branch 'origin/release'
-            }
+            // when {
+            //     branch 'origin/release'
+            // }
             steps {
                 echo 'publishing docker image to docker repository...'
                 withDockerRegistry([ credentialsId: "${DOCKER_REGISTRY_CREDENTIALS}", url: "${DOCKER_REGISTRY_URL}" ]) {
