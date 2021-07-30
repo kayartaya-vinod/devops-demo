@@ -84,7 +84,13 @@ pipeline {
             // }
             steps {
                 echo 'publishing docker image to docker repository...'
-                withDockerRegistry([ credentialsId: "${DOCKER_REGISTRY_CREDENTIALS}", url: "${DOCKER_REGISTRY_URL}" ]) {
+                withDockerRegistry([ 
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                    credentialsId: "${DOCKER_REGISTRY_CREDENTIALS}", 
+                    url: "${DOCKER_REGISTRY_URL}" 
+                    ]) {
                     sh "docker push ${APP_NAME}:${APP_VERSION}"
                     sh "docker push ${APP_NAME}:latest"
                 }
