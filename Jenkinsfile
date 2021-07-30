@@ -8,7 +8,8 @@ pipeline {
         APP_CONTEXT_ROOT = "/"
         APP_LISTENING_PORT = "8888"
         TEST_CONTAINER_NAME = "ci-${APP_NAME}-${BUILD_NUMBER}"
-        DOCKER_HUB = credentials("${ORG_NAME}-credentials")
+        DOCKER_REGISTRY_CREDENTIALS = credentials("ecr-credentials")
+        DOCKER_REGISTRY_URL = "153294646920.dkr.ecr.us-east-1.amazonaws.com/asde-batch5"
     }
 
     stages{
@@ -83,7 +84,7 @@ pipeline {
             }
             steps {
                 echo 'publishing docker image to docker repository...'
-                withDockerRegistry([ credentialsId: "${ORG_NAME}-docker-hub", url: "" ]) {
+                withDockerRegistry([ credentialsId: "${DOCKER_REGISTRY_CREDENTIALS}", url: "${DOCKER_REGISTRY_URL}" ]) {
                     sh "docker push ${ORG_NAME}/${APP_NAME}:${APP_VERSION}"
                     sh "docker push ${ORG_NAME}/${APP_NAME}:latest"
                 }
