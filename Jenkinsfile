@@ -14,21 +14,21 @@ pipeline {
 
     stages{
 
-        stage('compile'){
-            steps {
-                echo 'compiling...'
-                sh 'mvn clean compile'
-            }
-        }
+        // stage('compile'){
+        //     steps {
+        //         echo 'compiling...'
+        //         sh 'mvn clean compile'
+        //     }
+        // }
 
-        stage('unit test'){
-            steps {
-                echo 'unit tests...'
-                sh 'mvn test'
-                junit 'target/surefire-reports/*.xml'
-                jacoco execPattern: 'target/jacoco.exec'
-            }
-        }
+        // stage('unit test'){
+        //     steps {
+        //         echo 'unit tests...'
+        //         sh 'mvn test'
+        //         junit 'target/surefire-reports/*.xml'
+        //         jacoco execPattern: 'target/jacoco.exec'
+        //     }
+        // }
 
         stage('build'){
             steps {
@@ -97,12 +97,12 @@ pipeline {
             }
         }
     }
-    post {
-        always {
-            echo "removing docker test container..."
-            // sh "docker stop ${TEST_CONTAINER_NAME}"
-            echo "removing the workspace"
-            cleanWs()
-        }
-    }
+    // post {
+    //     always {
+    //         echo "removing docker test container..."
+    //         // sh "docker stop ${TEST_CONTAINER_NAME}"
+    //         echo "removing the workspace"
+    //         cleanWs()
+    //     }
+    // }
 }
