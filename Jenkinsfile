@@ -41,14 +41,14 @@ pipeline {
         stage('dockerize'){
             steps {
                 echo 'creating docker image...'
-                sh "docker build -t ${ORG_NAME}/${APP_NAME}:${APP_VERSION} -t ${ORG_NAME}/${APP_NAME}:latest ."
+                sh "docker build -t ${APP_NAME}:${APP_VERSION} -t ${APP_NAME}:latest ."
             }
         }
 
         stage('docker test container'){
             steps {
                 echo 'booting up docker test container...'
-                sh "docker run -dp ${APP_LISTENING_PORT}:${APP_LISTENING_PORT} --name ${TEST_CONTAINER_NAME} --rm ${ORG_NAME}/${APP_NAME}:latest"
+                sh "docker run -dp ${APP_LISTENING_PORT}:${APP_LISTENING_PORT} --name ${TEST_CONTAINER_NAME} --rm ${APP_NAME}:latest"
             }
         }
 
@@ -85,8 +85,8 @@ pipeline {
             steps {
                 echo 'publishing docker image to docker repository...'
                 withDockerRegistry([ credentialsId: "${DOCKER_REGISTRY_CREDENTIALS}", url: "${DOCKER_REGISTRY_URL}" ]) {
-                    sh "docker push ${ORG_NAME}/${APP_NAME}:${APP_VERSION}"
-                    sh "docker push ${ORG_NAME}/${APP_NAME}:latest"
+                    sh "docker push ${APP_NAME}:${APP_VERSION}"
+                    sh "docker push ${APP_NAME}:latest"
                 }
             }
         }
