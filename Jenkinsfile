@@ -14,21 +14,21 @@ pipeline {
 
     stages{
 
-        // stage('compile'){
-        //     steps {
-        //         echo 'compiling...'
-        //         sh 'mvn clean compile'
-        //     }
-        // }
+        stage('compile'){
+            steps {
+                echo 'compiling...'
+                sh 'mvn clean compile'
+            }
+        }
 
-        // stage('unit test'){
-        //     steps {
-        //         echo 'unit tests...'
-        //         sh 'mvn test'
-        //         junit 'target/surefire-reports/*.xml'
-        //         jacoco execPattern: 'target/jacoco.exec'
-        //     }
-        // }
+        stage('unit test'){
+            steps {
+                echo 'unit tests...'
+                sh 'mvn test'
+                junit 'target/surefire-reports/*.xml'
+                jacoco execPattern: 'target/jacoco.exec'
+            }
+        }
 
         stage('build'){
             steps {
@@ -45,38 +45,38 @@ pipeline {
             }
         }
 
-        // stage('docker test container'){
-        //     steps {
-        //         echo 'booting up docker test container...'
-        //         sh "docker run -dp ${APP_LISTENING_PORT}:${APP_LISTENING_PORT} --name ${TEST_CONTAINER_NAME} --rm ${APP_NAME}:latest"
-        //     }
-        // }
+        stage('docker test container'){
+            steps {
+                echo 'booting up docker test container...'
+                sh "docker run -dp ${APP_LISTENING_PORT}:${APP_LISTENING_PORT} --name ${TEST_CONTAINER_NAME} --rm ${APP_NAME}:latest"
+            }
+        }
 
-        // stage('performance test'){
-        //     steps {
-        //         echo 'testing for performance...'
-        //         sh "jmeter -n -t ./devops-demo.jmx -l ./target/devops-demo.jtl"
-        //         archiveArtifacts artifacts: 'target/*.jtl', fingerprint: true
-        //     }
-        // }
+        stage('performance test'){
+            steps {
+                echo 'testing for performance...'
+                sh "jmeter -n -t ./devops-demo.jmx -l ./target/devops-demo.jtl"
+                archiveArtifacts artifacts: 'target/*.jtl', fingerprint: true
+            }
+        }
 
-    //    stage('Code inspection & quality gate') {
-    //        steps {
-    //            echo "run code inspection & check quality gate..."
-    //            withSonarQubeEnv('ci-sonarqube') {
-    //                sh "mvn sonar:sonar"
-    //            }
-    //            timeout(time: 10, unit: 'MINUTES') {
-    //                //waitForQualityGate abortPipeline: true
-    //                script  {
-    //                    def qg = waitForQualityGate()
-    //                    if (qg.status != 'OK' && qg.status != 'WARN') {
-    //                        error "Pipeline aborted due to quality gate failure: ${qg.status}"
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
+       stage('Code inspection & quality gate') {
+           steps {
+               echo "run code inspection & check quality gate..."
+               withSonarQubeEnv('ci-sonarqube') {
+                   sh "mvn sonar:sonar"
+               }
+               timeout(time: 10, unit: 'MINUTES') {
+                   //waitForQualityGate abortPipeline: true
+                   script  {
+                       def qg = waitForQualityGate()
+                       if (qg.status != 'OK' && qg.status != 'WARN') {
+                           error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                       }
+                   }
+               }
+           }
+       }
 
         stage('publish docker image'){
             // when {
@@ -97,12 +97,12 @@ pipeline {
             }
         }
     }
-    // post {
-    //     always {
-    //         echo "removing docker test container..."
-    //         // sh "docker stop ${TEST_CONTAINER_NAME}"
-    //         echo "removing the workspace"
-    //         cleanWs()
-    //     }
-    // }
+    post {
+        always {
+            echo "removing docker test container..."
+            // sh "docker stop ${TEST_CONTAINER_NAME}"
+            echo "removing the workspace"
+            cleanWs()
+        }
+    }
 }
